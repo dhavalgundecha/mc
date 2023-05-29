@@ -1,0 +1,139 @@
+EXPT 1 : CDMA
+
+import numpy as np
+c1=[1,1,1,1]
+c2=[1,-1,1,-1]
+c3=[1,1,-1,-1]
+c4=[1,-1,-1,1]
+rc=[]
+print("Enter the data bits :")
+d1=int(input("Enter D1 :"))
+d2=int(input("Enter D2 :"))
+d3=int(input("Enter D3 :"))
+d4=int(input("Enter D4 :"))
+r1=np.multiply(c1,d1)
+r2=np.multiply(c2,d2)
+r3=np.multiply(c3,d3)
+r4=np.multiply(c4,d4)
+resultant_channel=r1+r2+r3+r4;
+print("Resultant Channel",resultant_channel)
+Channel=int(input("Enter the station to listen for C1=1 ,C2=2, C3=3 C4=4 : "))
+if Channel==1:
+rc=c1
+elif Channel==2:
+rc=c2
+elif Channel==3:
+rc=c3
+elif Channel==4:
+rc=c4
+inner_product=np.multiply(resultant_channel,rc)
+print("Inner Product",inner_product)
+res1=sum(inner_product)
+data=res1/len(inner_product)
+print("Data bit that was sent",data)
+
+EXPT 4 : Rayleigh Fading Wireless Channel with BPSK
+Matlab Code
+
+clear 
+N = 10^6 % number of bits or symbols 
+rand('state',100); % initializing the rand() function 
+randn('state',200); % initializing the randn() function
+% Transmitter 
+ip = rand(1,N)>0.5; % generating 0,1 with equal probability 
+s = 2*ip-1; % BPSK modulation 0 -> -1; 1 -> 1 
+n = 1/sqrt(2)*[randn(1,N) + j*randn(1,N)]; % white gaussian noise, 0dB variance 
+Eb_N0_dB = [-3:10]; % multiple Eb/N0 values 
+for ii = 1:length(Eb_N0_dB) 
+% Noise addition 
+y = s + 10^(-Eb_N0_dB(ii)/20)*n; % additive white gaussian noise 
+% receiver - hard decision decoding 
+ipHat = real(y)>0; 
+% counting the errors 
+nErr(ii) = size(find([ip- ipHat]),2); 
+end 
+simBer = nErr/N; % simulated ber 
+theoryBer = 0.5*erfc(sqrt(10.^(Eb_N0_dB/10))); % theoretical ber 
+% plot 
+figure 1
+semilogy(Eb_N0_dB,theoryBer,'b.-'); 
+hold on 
+semilogy(Eb_N0_dB,simBer,'mx-'); 
+axis([-3 10 10^-5 0.5]) 
+grid on 
+legend('theory', 'simulation'); 
+xlabel('Eb/No, dB'); 
+ylabel('Bit Error Rate'); 
+title('Bit error probability curve for BPSK modulation');
+%%BER For BPSK Modulation in Rayleigh fading channel
+ip = rand(1,N)>0.5; % generating 0,1 with equal probability
+s = 2*ip-1; % BPSK modulation 0 -> -1; 1 -> 0 
+Eb_N0_dB = [-3:35]; % multiple Eb/N0 values
+for ii = 1:length(Eb_N0_dB)
+ 
+ n = 1/sqrt(2)*[randn(1,N) + j*randn(1,N)]; % white gaussian noise, 0dB variance 
+ h = 1/sqrt(2)*[randn(1,N) + j*randn(1,N)]; % Rayleigh channel 
+ % Channel and noise Noise addition
+ y = h.*s + 10^(-Eb_N0_dB(ii)/20)*n; 
+ % equalization
+ yHat = y./h;
+ % receiver - hard decision decoding
+ ipHat = real(yHat)>0;
+ % counting the errors
+ nErr(ii) = size(find([ip- ipHat]),2);
+end
+simBer = nErr/N; % simulated ber
+theoryBerAWGN = 0.5*erfc(sqrt(10.^(Eb_N0_dB/10))); % theoretical ber
+EbN0Lin = 10.^(Eb_N0_dB/10);
+theoryBer = 0.5.*(1-sqrt(EbN0Lin./(EbN0Lin+1)));
+% plot
+Figure 2
+semilogy(Eb_N0_dB,theoryBerAWGN,'cd-','LineWidth',2);
+hold on
+semilogy(Eb_N0_dB,theoryBer,'bp-','LineWidth',2);
+semilogy(Eb_N0_dB,simBer,'mx-','LineWidth',2);
+axis([-3 35 10^-5 0.5])
+grid on
+legend('AWGN-Theory','Rayleigh-Theory', 'Rayleigh-Simulation');
+xlabel('Eb/No, dB');
+ylabel('Bit Error Rate');
+title('BER for BPSK modulation in Rayleigh channel');
+
+EXPT 8 : File Transfer using TCP/IP
+
+Client Code
+
+import socket
+Server_ip="localhost"
+Server_host=8002
+FORMAT="utf-8"
+CS=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+CS.connect((Server_ip,Server_host))
+file = open("data/abc.txt","r")
+data=file.read()
+CS.send("abc.txt".encode(FORMAT))
+msg=CS.recv(1024)
+print( msg)
+CS.send(data.encode(FORMAT))
+msg=CS.recv(1024)
+print(msg)
+
+Server Code
+
+import socket
+Server_ip="localhost"
+Server_host=8002
+FORMAT="utf-8"
+SS=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+SS.bind((Server_ip,Server_host))
+SS.listen(5)
+s1, addr=SS.accept()
+file_name= s1.recv(1024).decode(FORMAT)
+print(file_name)
+file=open(file_name,"w")
+s1.send("File name received".encode())
+data=s1.recv(1024).decode(FORMAT)
+print("File data received")
+s1.send("File data received".encode())
+file.write(data)
+file.close()
