@@ -99,6 +99,54 @@ xlabel('Eb/No, dB');
 ylabel('Bit Error Rate');
 title('BER for BPSK modulation in Rayleigh channel');
 
+
+Expt 5 : Configure a cisco router as a dhcp server
+
+take 1 router, 1 switch, 1 laptop and 1 pc
+connect with copper wire
+
+click on router
+cli
+
+no
+en
+config t
+hostname R1
+int f0/0
+ip add 192.168.1.1 255.255.255.0
+no sh
+
+sh ip int br
+wr
+ip dhcp pool abc
+default-router 192.168.1.1
+network 192.168.1.0 255.255.255.0
+wr
+
+(ping other computer)
+(click pc)
+(then terminal)
+
+ping 192.168.1.3
+
+
+Expt 6: handover and snr for call drop
+
+Step1: Click on START button to start experiment 
+Step2: Enter your name then click OK button.
+Step3: Select the parameters (e.g.: Reuse, Environment, Beamwidth, Carrier frequency etc.)
+Step4: Click on START button and observe No. of Call Drops and No. of Handoffs.
+Step5: Enter your observation in the OBSERVATION box and Click on SUBMIT button. 
+Step6: Finally, click on REPORT to generate PDF report of the experiment.
+
+
+Expt 7: outage probability, lcr
+
+Step3: Enter the input parameters value. Then click on "RESET" Button. Observed the waveform.
+Step4: Enter value of LCR Exp and ADF Exp in both MRC and SC from the waveform. Then Click on 
+"SUBMIT" Button. 
+
+
 EXPT 8 : File Transfer using TCP/IP
 
 Client Code
@@ -137,3 +185,4 @@ print("File data received")
 s1.send("File data received".encode())
 file.write(data)
 file.close()
+
